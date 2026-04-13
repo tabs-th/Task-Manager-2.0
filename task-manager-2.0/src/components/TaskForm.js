@@ -39,12 +39,18 @@ export default function TaskForm({ onAdd }) {
         placeholder="Add race gear..."
         className="flex-1 p-3 rounded-lg bg-background border border-foreground/20 focus:outline-none focus:border-neon-green text-foreground"
       />
-      <button 
+      {/* <button 
         type="submit" 
         className="bg-neon-green text-black font-bold px-6 py-2 rounded-lg hover:opacity-80 transition-opacity"
       >
         ADD
-      </button>
+      </button> */}
+        <button 
+        type="submit" 
+        className="bg-[var(--neon-green)] text-black font-bold px-6 py-2 rounded-lg hover:opacity-90 transition-opacity"
+        >
+        ADD
+        </button>
     </form>
   );
 }

@@ -1,19 +1,19 @@
 /* COMPONENT: TaskBoard
-  PURPOSE: Holds main tasks and distributes data to other files, like a hub. 
-  TYPE: Client Component
-  PROPS: None (this is the top-level state holder)
+   PURPOSE: The "Brain" of the app. It holds the main gear list and 
+            passes functions down to everything else.
+   TYPE: Client Component
 */
 'use client';
 
 import { useState, useEffect } from 'react';
+// We have to import the pieces we built so they show up!
+import AddTaskForm from './TaskForm';
+import TaskList from './TaskList';
+import TaskStats from './TaskStats';
 
 export default function TaskBoard() {
-  /* RUBRIC: State declaration & Lazy Initializer
-    Why: I'm putting the gear list in state so React knows to update the screen 
-    when I add/delete items. I'm using the 'typeof window' check because 
-    localStorage only works in the browser, and Next.js tries to run this on 
-    the server first which would cause an error.
-  */
+  const [mounted, setMounted] = useState(false);
+  
   const [tasks, setTasks] = useState(() => {
     if (typeof window === 'undefined') return [];
     const saved = localStorage.getItem('race-gear');
@@ -23,44 +23,50 @@ export default function TaskBoard() {
     ];
   });
 
-  /* RUBRIC: Every useEffect explained
-    Why: This effect handles 'Persistence'. It watches the [tasks] array 
-    and saves the data to localStorage whenever something changes so the 
-    user doesn't lose their list on a refresh.
-  */
+  const [filter, setFilter] = useState('all');
+
+  useEffect(() => { setMounted(true); }, []);
+
   useEffect(() => {
     localStorage.setItem('race-gear', JSON.stringify(tasks));
   }, [tasks]);
 
-  /* RUBRIC: Derived Value
-    Why: These aren't in state because I can just calculate them from the 
-    tasks array I already have. This avoids bugs where state gets out of sync.
-  */
-  const totalItems = tasks.length;
-  const packedItems = tasks.filter(t => t.done).length;
+  // HANDLERS: These are the functions that let us actually interact
+  const addTask = (title) => setTasks([...tasks, { id: crypto.randomUUID(), title, done: false }]);
+  const toggleTask = (id) => setTasks(tasks.map(t => t.id === id ? { ...t, done: !t.done } : t));
+  const deleteTask = (id) => setTasks(tasks.filter(t => t.id !== id));
+  const clearDone = () => setTasks(tasks.filter(t => !t.done));
+
+  // DERIVED VALUE: This handles the All/Active/Done filtering
+  const visibleTasks = tasks.filter(t => {
+    if (filter === 'active') return !t.done;
+    if (filter === 'done') return t.done;
+    return true;
+  });
+
+  if (!mounted) return null;
 
   return (
-    <div className="bg-card-bg p-6 rounded-xl border border-foreground/10 shadow-lg">
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold italic text-neon-green uppercase tracking-tight">
-          Race Day Checklist <span className="text-foreground not-italic opacity-50">2.0</span>
-        </h1>
-        <p className="text-sm text-gray-500">
-          Status: {packedItems} of {totalItems} items ready for Chicago
-        </p>
-      </header>
-
-      <div className="space-y-2">
-        {tasks.map((task) => (
-          <div key={task.id} className="flex items-center gap-3 p-3 border-b border-foreground/5">
-            {/* Visual indicator for 'Done' requirement */}
-            <div className={`w-2 h-6 rounded-full ${task.done ? 'bg-neon-green' : 'bg-gray-500'}`} />
-            <span className={task.done ? 'line-through opacity-40' : 'font-medium'}>
-              {task.title}
-            </span>
-          </div>
-        ))}
-      </div>
+    <div className="bg-card-bg p-6 rounded-2xl border border-foreground/10 shadow-xl">
+      <h1 className="text-3xl font-black italic text-neon-green mb-6 uppercase">Race Prep</h1>
+      
+      {/* 1. The Input Form */}
+      <AddTaskForm onAdd={addTask} />
+      
+      {/* 2. The Stats & Filters */}
+      <TaskStats 
+        tasks={tasks} 
+        filter={filter} 
+        setFilter={setFilter} 
+        onClear={clearDone} // This sends the 'clearDone' logic down as the 'onClear' prop
+      />
+      
+      {/* 3. The actual List of gear */}
+      <TaskList 
+        tasks={visibleTasks} 
+        onToggle={toggleTask} 
+        onDelete={deleteTask} 
+      />
     </div>
   );
 }
