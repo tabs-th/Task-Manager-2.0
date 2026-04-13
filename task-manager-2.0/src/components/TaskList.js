@@ -1,6 +1,10 @@
-/* COMPONENT: TaskList
-   PURPOSE: Maps through the filtered tasks and renders TaskCards.
-*/
+/* ══════════════════════════════════════════════════════
+   COMPONENT: TaskList
+   PURPOSE:  This component takes the array of gear and loops 
+             through them to render a TaskCard for each one.
+   TYPE:     Functional Component
+   PROPS:    tasks (the filtered array), onToggle, onDelete
+   ══════════════════════════════════════════════════════ */
 import TaskCard from './TaskCard';
 
 export default function TaskList({ tasks, onToggle, onDelete }) {
