@@ -1,8 +1,11 @@
-/* COMPONENT: TaskBoard
-   PURPOSE: The "Brain" of the app. It holds the main gear list and 
-            passes functions down to everything else.
-   TYPE: Client Component
-*/
+/* ══════════════════════════════════════════════════════
+   COMPONENT: TaskBoard
+   PURPOSE:  The "Brain" of the app. It owns all task state, 
+             handles persistence, and calculates visibility.
+   TYPE:     Client Component ('use client') — needs state/effects
+   PATTERN:  Lifting State Up — children receive data & callbacks 
+             so this single file stays the source of truth.
+   ══════════════════════════════════════════════════════ */
 'use client';
 
 import { useState, useEffect } from 'react';
