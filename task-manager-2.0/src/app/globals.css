@@ -3,22 +3,22 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  /* Added for running theme using Nike After Dark as inspo */
+  /* Added these for running theme usng Nike After Dark as inspo */
   --neon-green: #39FF14;
   --card-bg: #ffffff;
+}
+
+@theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-neon-green: var(--neon-green);
   --color-card-bg: var(--card-bg);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
-    /* Dark mode */
     --card-bg: #1a1a1a;
   }
 }
